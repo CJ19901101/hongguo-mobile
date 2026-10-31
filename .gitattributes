@@ -3,3 +3,4 @@
 *.yml text eol=lf
 *.png binary
 *.mp4 binary
+*.bat text eol=crlf

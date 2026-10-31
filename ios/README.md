@@ -33,15 +33,36 @@
 4. 点 **Create repository**，复制页面上的仓库地址，形如
    `https://github.com/你的用户名/hongguo-mobile.git`
 
-#### A-2 推送代码（Windows 命令行，约 1 分钟）
+#### A-2 推送代码（约 1 分钟）
 
-在项目目录执行（把地址换成你自己的）：
+**方式一：双击脚本（推荐，不用碰命令行）**
+
+项目根目录有个 `一键推送到GitHub.bat`：
+
+1. 打开文件资源管理器，地址栏粘贴 `C:\Users\Administrator\WorkBuddy\2026-10-31-15-57-02\hongguo-mobile` 回车
+2. **双击 `一键推送到GitHub.bat`**（会弹一个黑色窗口）
+3. 把刚才复制的仓库地址粘贴进去，按回车（黑窗口里粘贴：右键即可，或 Ctrl+V）
+4. 若弹出浏览器 → 登录 GitHub → 点 **Authorize**
+5. 看到 `[OK] code pushed to GitHub` 就成功了，按任意键关闭窗口
+
+**方式二：自己开命令行敲命令**
+
+在项目文件夹里打开终端，有 3 种做法任选：
+
+| 做法 | 步骤 |
+|---|---|
+| 资源管理器右键 | 进入 `hongguo-mobile` 文件夹 → **按住 Shift + 右键空白处** → 「在此处打开 PowerShell 窗口」 |
+| Git Bash | 同样右键 → **Git Bash Here**（Win11 需先点「显示更多选项」） |
+| 从开始菜单 | 开始菜单搜 **Git Bash** 打开 → 输入 `cd /c/Users/Administrator/WorkBuddy/2026-10-31-15-57-02/hongguo-mobile` 回车 |
+
+然后执行（把地址换成你自己的）：
 
 ```bash
-cd hongguo-mobile
 git remote add origin https://github.com/你的用户名/hongguo-mobile.git
 git push -u origin main
 ```
+
+> 提示：不要用 `cmd` 手动敲这两行（中文路径下容易因代码页报错），用 PowerShell 或 Git Bash。
 
 推送时 Git 会弹出浏览器窗口要求登录 GitHub（Git Credential Manager 自动处理），点 **Authorize** 即可，**不需要**手动生成 token。
 
