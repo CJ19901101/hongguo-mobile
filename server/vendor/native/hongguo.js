@@ -318,7 +318,8 @@ async function fetchPlayUrlFromWeb(vid, sid, onFailure) {
       lastErr = e;
     }
   }
-  if (lastErr) console.warn('[Web] 取播放直链失败:', sourceFailure('web', lastErr).message);
+  // 诊断信息而非错误：网页源取不到时仍会自动回退 App 源 / 旧接口，播放不受影响。
+  if (lastErr) console.warn('[Web] 网页源未取到直链（将自动回退其他源）:', sourceFailure('web', lastErr).message);
   onFailure?.(lastErr);
   return null;
 }
