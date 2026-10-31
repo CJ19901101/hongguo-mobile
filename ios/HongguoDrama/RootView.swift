@@ -89,7 +89,7 @@ struct SetupView: View {
 
             Text("连接到电脑上运行的服务")
                 .font(.system(size: 15))
-                .foregroundStyle(.white.opacity(0.55))
+                .foregroundStyle(Color.white.opacity(0.55))
                 .padding(.top, 6)
 
             TextField("服务地址", text: $text)
@@ -142,7 +142,7 @@ struct SetupView: View {
                 Button(action: onCancel) {
                     Text("返回播放")
                         .font(.system(size: 15, weight: .medium))
-                        .foregroundStyle(.white.opacity(0.6))
+                        .foregroundStyle(Color.white.opacity(0.6))
                         .frame(maxWidth: .infinity)
                         .frame(height: 44)
                 }
@@ -150,13 +150,13 @@ struct SetupView: View {
             }
 
             VStack(alignment: .leading, spacing: 8) {
-                Text("怎么填").font(.system(size: 13, weight: .bold)).foregroundStyle(.white.opacity(0.75))
+                Text("怎么填").font(.system(size: 13, weight: .bold)).foregroundStyle(Color.white.opacity(0.75))
                 Text("1. 电脑上运行 start.bat（或 npm start），窗口会打印 http://192.168.x.x:8787")
                 Text("2. 把那个地址填到上面，手机与电脑连同一个 Wi-Fi")
                 Text("3. 电脑换了网络/重开机导致 IP 变化时，长按画面左上角 1 秒改地址")
             }
             .font(.system(size: 12.5))
-            .foregroundStyle(.white.opacity(0.45))
+            .foregroundStyle(Color.white.opacity(0.45))
             .lineSpacing(3)
             .padding(.top, 22)
 
@@ -201,12 +201,12 @@ struct FailureView: View {
             Text("请确认电脑上的服务已启动，手机与电脑在同一 Wi-Fi。\n当前地址：\(address)")
                 .font(.system(size: 13))
                 .multilineTextAlignment(.center)
-                .foregroundStyle(.white.opacity(0.55))
+                .foregroundStyle(Color.white.opacity(0.55))
 
             Text(message)
                 .font(.system(size: 11))
                 .multilineTextAlignment(.center)
-                .foregroundStyle(.white.opacity(0.3))
+                .foregroundStyle(Color.white.opacity(0.3))
                 .lineLimit(3)
 
             HStack(spacing: 12) {

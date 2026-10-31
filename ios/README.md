@@ -17,23 +17,79 @@
 
 ### 路线 A：GitHub Actions 云端编译（推荐，无需 Mac）
 
-1. 注册/登录 GitHub，新建一个仓库（可以是 Private 私有仓库）
-2. 把本项目推上去（Windows 上执行）：
+> 本目录所在的项目**已经初始化好 git 仓库并完成首次提交**（82 个文件，已排除 `node_modules`、`.cache`、测试视频）。你只需要：建仓库 → 加远端 → push → 下载产物。
+
+#### A-1 建一个空仓库（网页操作，约 1 分钟）
+
+1. 打开 <https://github.com> 登录（没账号先注册，**必须验证邮箱**，否则 Actions 不可用）
+2. 右上角 **+** → **New repository**
+3. 填写：
+   - **Repository name**：`hongguo-mobile`（随便起）
+   - **Description**：可留空
+   - **Visibility**：`Private`（推荐）或 `Public`
+     - Private：每月 2000 分钟免费额度，但 macOS 机器按 **10 倍**计费 → 实际约 200 分钟，一次构建花 ~40 分钟额度，够跑 5 次/月
+     - Public：Actions **完全免费无限**，但代码公开（本项目是 GPL-3.0 第三方客户端，公开无额外风险）
+   - **不要**勾选 "Add a README file"、"Add .gitignore"、"Choose a license"——必须建**空仓库**，否则 push 会冲突
+4. 点 **Create repository**，复制页面上的仓库地址，形如
+   `https://github.com/你的用户名/hongguo-mobile.git`
+
+#### A-2 推送代码（Windows 命令行，约 1 分钟）
+
+在项目目录执行（把地址换成你自己的）：
 
 ```bash
 cd hongguo-mobile
-git init
-git add .
-git commit -m "hongguo-mobile with iOS shell"
-git branch -M main
-git remote add origin https://github.com/<你的用户名>/<仓库名>.git
+git remote add origin https://github.com/你的用户名/hongguo-mobile.git
 git push -u origin main
 ```
 
-3. 打开仓库页面 → **Actions** 标签 → 左侧 **Build unsigned IPA** → 右侧 **Run workflow** → 运行
-4. 跑完后（约 3–5 分钟）在该次运行页面底部的 **Artifacts** 下载 `HongguoDrama-unsigned-ipa`，解压得到 `HongguoDrama-unsigned.ipa`
+推送时 Git 会弹出浏览器窗口要求登录 GitHub（Git Credential Manager 自动处理），点 **Authorize** 即可，**不需要**手动生成 token。
 
-> 推送时 Actions 也会自动触发；以后改了 `ios/` 里的代码，push 就会重新出新包。
+> 如果弹窗没出现或提示认证失败，可在 GitHub 上生成 Personal Access Token（Settings → Developer settings → Personal access tokens → Tokens(classic) → Generate new token，勾 `repo` 权限），然后把密码位置填这个 token。
+
+#### A-3 等它自己跑（约 3–5 分钟）
+
+push 成功后：仓库页面顶部 **Actions** 标签 → 左侧列表 **Build unsigned IPA** → 应该已经有一条正在跑的任务（因为本次提交包含 `ios/` 变更，工作流自动触发）。
+
+没自动触发就手动：**Actions** → 选 **Build unsigned IPA** → 右侧 **Run workflow** → 分支选 `main` → 绿色 **Run workflow** 按钮。
+
+点进那次运行，能看到 6 个步骤依次变绿：
+
+| 步骤 | 在做什么 | 耗时 |
+|---|---|---|
+| Checkout | 拉取代码 | ~5s |
+| Install XcodeGen | 装工程生成器 | ~40s |
+| Generate Xcode project | 生成 `.xcodeproj` | ~2s |
+| Build (unsigned, device arm64) | 真正的 Swift 编译（arm64 真机包） | 1–3 分钟 |
+| Package IPA | 打成 `Payload/` + zip 成 ipa | ~10s |
+| Upload artifact | 上传产物 | ~10s |
+
+右上角出现绿色 ✅ 即成功。
+
+#### A-4 下载 IPA
+
+1. 在**该次运行页面**，滚到最底部 **Artifacts** 区域
+2. 点 **HongguoDrama-unsigned-ipa** 下载（文件名会是 `HongguoDrama-unsigned-ipa.zip`）
+3. 解压这个 zip，里面就是 **`HongguoDrama-unsigned.ipa`**（约 3–6 MB）
+
+拿到这个文件就进入[第 2 步](#第-2-步用-apple-id-签名并安装在-windows-上)。
+
+#### A-5 以后怎么重新出包
+
+改了 `ios/` 里的 Swift 代码 → `git add . && git commit -m "改了什么" && git push` → 自动重新构建。
+只想重新跑一次（代码没改）：Actions → Run workflow。
+
+#### A-6 构建失败了怎么排查
+
+点进失败的运行 → 左侧点红色 ❌ 的那一步 → 展开日志，把最后 30 行发我。常见情况：
+
+| 现象 | 原因与处理 |
+|---|---|
+| `xcodegen: command not found` | brew 安装步骤失败，重跑一次 Run workflow 一般就好 |
+| `error: Signing for "HongguoDrama" requires a development team` | 说明 `CODE_SIGNING_ALLOWED=NO` 没生效，检查工作流里该参数是否被改动 |
+| `error: unable to find utility "xcodebuild"` | runner 镜像暂时异常，把 `runs-on` 改成 `macos-14` 或 `macos-latest` 再跑 |
+| `No such file or directory: ios/HongguoDrama-unsigned.ipa` | Package IPA 步骤失败，往上看 `find` 找到的 app 路径 |
+| 运行按钮是灰色 | 仓库 Settings → Actions → General → 选 **Allow all actions and reusable workflows** → Save |
 
 ### 路线 B：本地 Mac 编译（如果你有 Mac）
 
