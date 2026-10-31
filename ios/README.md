@@ -41,9 +41,13 @@
 
 1. 打开文件资源管理器，地址栏粘贴 `C:\Users\Administrator\WorkBuddy\2026-10-31-15-57-02\hongguo-mobile` 回车
 2. **双击 `一键推送到GitHub.bat`**（会弹一个黑色窗口）
-3. 把刚才复制的仓库地址粘贴进去，按回车（黑窗口里粘贴：右键即可，或 Ctrl+V）
+3. 脚本会自动找到 git 并推送（远端地址已内置为 `CJ19901101/hongguo-mobile`）
 4. 若弹出浏览器 → 登录 GitHub → 点 **Authorize**
 5. 看到 `[OK] code pushed to GitHub` 就成功了，按任意键关闭窗口
+
+> 这台电脑的 git 是**便携版**（随 WorkBuddy 提供，位于 `E:\Program Files\WorkBuddy\resources\vendor\PortableGit`），
+> **没有加入系统 PATH**。所以在 PowerShell / cmd 里直接敲 `git` 会报「无法将“git”项识别为 cmdlet」——
+> 这不是没装，而是找不到。脚本已内置路径探测（含 C–G 盘扫描），双击即可，无需处理这个问题。
 
 **方式二：自己开命令行敲命令**
 
@@ -55,14 +59,16 @@
 | Git Bash | 同样右键 → **Git Bash Here**（Win11 需先点「显示更多选项」） |
 | 从开始菜单 | 开始菜单搜 **Git Bash** 打开 → 输入 `cd /c/Users/Administrator/WorkBuddy/2026-10-31-15-57-02/hongguo-mobile` 回车 |
 
-然后执行（把地址换成你自己的）：
+然后执行（仓库地址已配好，只需 push）：
 
-```bash
-git remote add origin https://github.com/你的用户名/hongguo-mobile.git
-git push -u origin main
+```powershell
+& "E:\Program Files\WorkBuddy\resources\vendor\PortableGit\cmd\git.exe" push -u origin main
 ```
 
-> 提示：不要用 `cmd` 手动敲这两行（中文路径下容易因代码页报错），用 PowerShell 或 Git Bash。
+> 为什么带完整路径：本机 git 是 WorkBuddy 自带的便携版，不在系统 PATH 中，直接敲 `git` 会报
+> `无法将“git”项识别为 cmdlet、函数、脚本文件或可运行程序的名称`。用完整路径即可，或直接双击上面的 .bat。
+>
+> 也不要进 `cmd` 敲（中文路径 + 代码页容易把输出解析错），用 PowerShell 或 Git Bash 更稳。
 
 推送时 Git 会弹出浏览器窗口要求登录 GitHub（Git Credential Manager 自动处理），点 **Authorize** 即可，**不需要**手动生成 token。
 
@@ -87,11 +93,19 @@ push 成功后：仓库页面顶部 **Actions** 标签 → 左侧列表 **Build 
 
 右上角出现绿色 ✅ 即成功。
 
+> **本机已实测通过（2026-10-31）**：Run #1 全 7 步 success，总耗时约 9 分钟（排队等 macOS 机器约 8 分钟 + 编译 30 秒）。
+> 产物：`HongguoDrama-unsigned-ipa`，388 KB。已下载并校验：
+> Mach-O 64 位 **arm64**、无 `_CodeSignature`（未签名，符合预期）、Bundle ID `com.hongguodrama.app`、
+> ATS 放行 http、含本地网络权限声明。
+> 本地副本：`dist/HongguoDrama-unsigned.ipa`（SHA256 前缀 `7cba432cdbc05227`）。
+
 #### A-4 下载 IPA
+
+**如果本机已经拿到 `dist/HongguoDrama-unsigned.ipa`，可直接跳到第 2 步。** 否则：
 
 1. 在**该次运行页面**，滚到最底部 **Artifacts** 区域
 2. 点 **HongguoDrama-unsigned-ipa** 下载（文件名会是 `HongguoDrama-unsigned-ipa.zip`）
-3. 解压这个 zip，里面就是 **`HongguoDrama-unsigned.ipa`**（约 3–6 MB）
+3. 解压这个 zip，里面就是 **`HongguoDrama-unsigned.ipa`**（实测 381 KB）
 
 拿到这个文件就进入[第 2 步](#第-2-步用-apple-id-签名并安装在-windows-上)。
 

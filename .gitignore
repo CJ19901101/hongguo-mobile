@@ -6,3 +6,6 @@ node_modules/
 # 测试产物（解密后的视频样本）
 scripts/out.mp4
 *.mp4
+
+# 本地打好的 IPA
+dist/
