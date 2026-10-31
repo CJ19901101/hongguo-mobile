@@ -1,0 +1,48 @@
+name: HongguoDrama
+options:
+  bundleIdPrefix: com.hongguodrama
+  deploymentTarget:
+    iOS: "15.0"
+  createIntermediateGroups: true
+  groupSortPosition: top
+
+settings:
+  base:
+    MARKETING_VERSION: "1.0.0"
+    CURRENT_PROJECT_VERSION: "1"
+    SWIFT_VERSION: "5.0"
+    ENABLE_USER_SCRIPT_SANDBOXING: NO
+    IPHONEOS_DEPLOYMENT_TARGET: "15.0"
+
+targets:
+  HongguoDrama:
+    type: application
+    platform: iOS
+    deploymentTarget: "15.0"
+    sources:
+      - path: HongguoDrama
+        excludes:
+          - "Info.plist"
+    settings:
+      base:
+        PRODUCT_NAME: HongguoDrama
+        PRODUCT_BUNDLE_IDENTIFIER: com.hongguodrama.app
+        INFOPLIST_FILE: HongguoDrama/Info.plist
+        TARGETED_DEVICE_FAMILY: "1,2"
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        CODE_SIGN_STYLE: Manual
+        CODE_SIGN_IDENTITY: ""
+        DEVELOPMENT_TEAM: ""
+        SUPPORTS_MACCATALYST: NO
+        SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD: NO
+        ONLY_ACTIVE_ARCH: NO
+
+schemes:
+  HongguoDrama:
+    build:
+      targets:
+        HongguoDrama: all
+    run:
+      config: Release
+    archive:
+      config: Release

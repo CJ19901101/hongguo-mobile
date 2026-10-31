@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no" />
+<title>红果短剧</title>
+<meta name="description" content="短剧搜索与播放，添加到主屏幕即可全屏使用" />
+<meta name="theme-color" content="#0b0b10" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<meta name="apple-mobile-web-app-title" content="红果短剧" />
+<meta name="format-detection" content="telephone=no" />
+<link rel="manifest" href="/manifest.webmanifest" />
+<link rel="apple-touch-icon" href="/icons/icon-180.png" />
+<link rel="icon" type="image/png" href="/icons/icon-192.png" />
+<link rel="stylesheet" href="/styles.css" />
+</head>
+<body>
+<div id="app">
+  <header class="topbar" id="topbar">
+    <div class="brand">
+      <span class="brand-mark">红果</span>
+      <span class="brand-sub">短剧</span>
+    </div>
+    <button class="icon-btn" id="btn-search" aria-label="搜索">
+      <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><circle cx="11" cy="11" r="7" fill="none" stroke="currentColor" stroke-width="2"/><path d="M16.5 16.5 L21 21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+    </button>
+  </header>
+
+  <main id="view" class="view"></main>
+
+  <nav class="tabbar" id="tabbar">
+    <button class="tab is-active" data-tab="home">
+      <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M4 10.5 12 4l8 6.5V20a1 1 0 0 1-1 1h-4v-6H9v6H5a1 1 0 0 1-1-1z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
+      <span>发现</span>
+    </button>
+    <button class="tab" data-tab="search">
+      <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><circle cx="11" cy="11" r="7" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M16.5 16.5 L21 21" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+      <span>搜索</span>
+    </button>
+    <button class="tab" data-tab="mine">
+      <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><circle cx="12" cy="8" r="3.6" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M4.5 20c1.2-3.6 4-5.4 7.5-5.4S18.3 16.4 19.5 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+      <span>我的</span>
+    </button>
+  </nav>
+</div>
+
+<div class="player-layer" id="player" hidden>
+  <video id="video" playsinline webkit-playsinline preload="metadata"></video>
+  <div class="gesture-layer" id="gesture-layer" aria-hidden="true"></div>
+  <div class="player-top">
+    <button class="icon-btn on-dark" id="player-back" aria-label="返回">
+      <svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true"><path d="M15 5 8 12l7 7" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+    <div class="player-title" id="player-title"></div>
+    <button class="icon-btn on-dark" id="player-list" aria-label="选集">
+      <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+    </button>
+  </div>
+  <div class="player-loading" id="player-loading"><span class="spinner"></span><em id="player-loading-text">正在解密片源…</em></div>
+  <div class="player-bottom">
+    <div class="seek" id="seek" role="slider" aria-label="播放进度" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" tabindex="0">
+      <div class="seek-track">
+        <div class="seek-buffer" id="seek-buffer"></div>
+        <div class="seek-played" id="seek-played"></div>
+        <div class="seek-thumb" id="seek-thumb"></div>
+      </div>
+    </div>
+    <div class="player-row">
+      <span class="time" id="time-current">00:00</span>
+      <div class="player-ctrl">
+        <button class="icon-btn on-dark" id="player-prev" aria-label="上一集">
+          <svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true"><path d="M18 6v12L9 12zM6 5v14" fill="currentColor" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
+        </button>
+        <button class="play-btn" id="player-toggle" aria-label="播放/暂停">
+          <svg viewBox="0 0 24 24" width="26" height="26" aria-hidden="true"><path d="M8 5l11 7-11 7z" fill="currentColor"/></svg>
+        </button>
+        <button class="icon-btn on-dark" id="player-next" aria-label="下一集">
+          <svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true"><path d="M6 6v12l9-6zM18 5v14" fill="currentColor" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
+        </button>
+        <button class="speed-btn" id="player-speed">1.0×</button>
+      </div>
+      <span class="time" id="time-total">00:00</span>
+    </div>
+  </div>
+  <div class="gesture-hud" id="gesture-hud">
+    <div class="hud-value" id="hud-value">00:00</div>
+    <div class="hud-label" id="hud-label">进度</div>
+    <div class="hud-bar"><i id="hud-bar-fill"></i></div>
+  </div>
+  <div class="tap-pulse" id="tap-pulse"></div>
+  <div class="sheet" id="player-sheet" hidden>
+    <div class="sheet-head"><b>选集</b><span id="sheet-count"></span></div>
+    <div class="sheet-body" id="sheet-body"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast" hidden></div>
+
+<script type="module" src="/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,8 @@
+# 生成物与构建产物
+HongguoDrama.xcodeproj/
+build/
+Payload/
+*.ipa
+xcuserdata/
+DerivedData/
+.DS_Store

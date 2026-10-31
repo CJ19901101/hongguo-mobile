@@ -1,0 +1,8 @@
+node_modules/
+.cache/
+*.log
+.DS_Store
+
+# 测试产物（解密后的视频样本）
+scripts/out.mp4
+*.mp4

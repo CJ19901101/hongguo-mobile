@@ -1,0 +1,61 @@
+name: Build unsigned IPA
+
+# 作用：在 GitHub 的 macOS 云机器上编译出"未签名 IPA"。
+# 下载 Artifact 后，用你自己的 Apple ID 通过 Sideloadly / AltStore / 爱思助手签名安装即可。
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main, master]
+    paths:
+      - "ios/**"
+      - ".github/workflows/ios-unsigned-ipa.yml"
+
+jobs:
+  build:
+    runs-on: macos-14
+    defaults:
+      run:
+        working-directory: ios
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install XcodeGen
+        run: brew install xcodegen
+
+      - name: Generate Xcode project
+        run: xcodegen generate
+
+      - name: Build (unsigned, device arm64)
+        run: |
+          set -o pipefail
+          xcodebuild \
+            -project HongguoDrama.xcodeproj \
+            -scheme HongguoDrama \
+            -configuration Release \
+            -sdk iphoneos \
+            -destination 'generic/platform=iOS' \
+            -derivedDataPath build \
+            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGN_IDENTITY="" \
+            build | tee build.log
+
+      - name: Package IPA
+        run: |
+          APP="$(find build/Build/Products/Release-iphoneos -maxdepth 1 -name '*.app' | head -n 1)"
+          echo "APP=$APP"
+          test -n "$APP"
+          rm -rf Payload HongguoDrama-unsigned.ipa
+          mkdir -p Payload
+          cp -R "$APP" Payload/
+          zip -qry HongguoDrama-unsigned.ipa Payload
+          ls -lh HongguoDrama-unsigned.ipa
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: HongguoDrama-unsigned-ipa
+          path: ios/HongguoDrama-unsigned.ipa
+          if-no-files-found: error
